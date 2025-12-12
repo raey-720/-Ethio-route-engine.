@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>EthioRoute Logistics Engine</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0; 
+            color: #343a40;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #1e3c72 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        .container { 
+            max-width: 950px; 
+            margin: 40px auto; 
+            background-color: #ffffff; 
+            padding: 30px; 
+            border-radius: 12px; 
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4); 
+            border: 1px solid #dee2e6; 
+        }
+        
+        .header {
+            display: flex;
+            align-items: center;
+            border-bottom: 3px solid #28a745; 
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+        .header h1 { 
+            color: #1e3c72; 
+            margin: 0 0 0 15px;
+            font-size: 2.2em;
+            font-weight: 700;
+        }
+        .logo-placeholder {
+            font-size: 2em;
+            color: #28a745; 
+        }
+
+        label { 
+            display: block; 
+            margin-top: 15px; 
+            font-weight: 600; 
+            color: #495057; 
+        }
+        input[type="number"], input[type="text"], select { 
+            width: calc(100% - 20px); 
+            padding: 10px; 
+            margin-top: 8px; 
+            border: 1px solid #ced4da; 
+            border-radius: 6px; 
+            box-sizing: border-box; 
+            transition: border-color 0.3s;
+        }
+        input[type="number"]:focus, input[type="text"]:focus, select:focus {
+            border-color: #28a745; 
+            outline: none;
+        }
+
+        .config-panel {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+        .config-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px 20px;
+        }
+        .config-inputs input, .config-inputs select {
+             width: 100%;
+        }
+
+        button { 
+            width: 100%;
+            padding: 15px 20px; 
+            background-color: #007bff; 
+            color: white; 
+            border: none; 
+            cursor: pointer; 
+            margin-top: 25px; 
+            font-size: 1.1em; 
+            border-radius: 6px; 
+            transition: background-color 0.3s;
+        }
+        button:hover { 
+            background-color: #0056b3; 
+        }
+
+        h2 { 
+            color: #1e3c72; 
+            border-bottom: 1px dashed #ced4da;
+            padding-bottom: 5px;
+            margin-top: 30px;
+        }
+        pre#logOutput {
+            width: 100%; 
+            box-sizing: border-box; 
+            margin-bottom: 10px; 
+            padding: 15px; 
+            border: 1px solid #dee2e6; 
+            white-space: pre-wrap; 
+            word-wrap: break-word; 
+            border-radius: 6px;
+            background-color: #fff3cd; 
+            color: #856404;
+            min-height: 100px;
+        }
+        /* NEW TABLE STYLING FOR PROFESSIONAL REPORT */
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 1em;
+            border: 2px solid #28a745;
+        }
+        .report-table th, .report-table td {
+            padding: 12px;
+            border: 1px solid #e9ecef;
+        }
+        .report-table th {
+            background-color: #1e3c72;
+            color: white;
+            text-align: left;
+            font-size: 1.1em;
+        }
+        .report-table td:last-child, .report-table th:last-child {
+            text-align: right;
+            font-weight: 600;
+        }
+        .section-header {
+            background-color: #f0f8ff;
+            font-weight: 700;
+            color: #1e3c72;
+            text-align: left !important;
+        }
+        .sub-item {
+            font-size: 0.95em;
+            padding-left: 30px !important;
+            border-left: 3px solid #dee2e6;
+        }
+        .total-footer th {
+            background-color: #28a745;
+            font-size: 1.4em !important;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <span class="logo-placeholder">🚚</span> 
+            <h1>EthioRoute Logistics Optimization Engine</h1>
+        </div>
+
+        <p>Input trip details to calculate the Total Optimized Cost.</p>
+
+        <label for="distance">Distance (KM):</label>
+        <input type="number" id="distance" value="800" min="10" required>
+
+        <label for="days">Estimated Trip Days:</label>
+        <input type="number" id="days" value="5" min="1" required>
+
+        <label for="truckType">Truck Type:</label>
+        <select id="truckType" required>
+            <option value="40FT_DRY_VAN">40ft Dry Van (General Cargo)</option>
+            <option value="40FT_REEFER">40ft Reefer (Refrigerated Cargo)</option>
+            <option value="15MT_FLATBED">15MT Flatbed (Non-Containerized)</option> 
+        </select>
+        
+        <label for="isExport">Cargo Status:</label>
+        <select id="isExport" required>
+            <option value="false">Import/Local Cargo</option>
+            <option value="true">Export Cargo (Applies Tariff Discount)</option>
+        </select>
+        
+        <label for="numStops">Number of Delivery Stops:</label>
+        <input type="number" id="numStops" value="4" min="1" required>
+        
+        <label for="cifValue">Goods Value (CIF Value - ETB):</label>
+        <input type="number" id="cifValue" value="500000" min="0" required>
+
+
+        <div class="config-panel">
+            <h2 style="margin-top: 0;">⚙️ Configuration Settings (Editable Rates)</h2>
+            <div class="config-inputs">
+                
+                <div>
+                    <label for="driverCost">1. Driver Daily Wage (ETB):</label>
+                    <input type="number" id="driverCost" value="1000.00" min="100" required>
+                </div>
+                
+                <div>
+                    <label for="truckRentalCost">2. Truck Rental Expense (ETB/Day):</label>
+                    <input type="number" id="truckRentalCost" value="3000.00" min="0" required>
+                </div>
+                
+                <div>
+                    <label for="fuelPrice">5. Fuel Price (ETB/Liter):</label>
+                    <input type="number" id="fuelPrice" value="45.00" min="1" step="0.01" required>
+                </div>
+
+                <div>
+                    <label for="inspectionFee">7. Customs Inspection Fee (ETB):</label>
+                    <input type="number" id="inspectionFee" value="500.00" min="0" required>
+                </div>
+                
+                <div>
+                    <label for="handlingCost">8. Dry Port Handling (ETB):</label>
+                    <input type="number" id="handlingCost" value="6000.00" min="0" required>
+                </div>
+
+                <div>
+                    <label for="customsDutyRate">3. Gomruk Customs Duty Rate (%):</label>
+                    <input type="number" id="customsDutyRate" value="20" min="0" max="35" step="0.01" required>
+                </div>
+                
+                <div>
+                    <label for="vatRate">6. VAT Rate (%):</label>
+                    <input type="number" id="vatRate" value="15" min="0" step="0.01" required>
+                </div>
+
+                <div>
+                    <label for="whtRate">6. WHT Rate (%):</label>
+                    <input type="number" id="whtRate" value="2" min="0" step="0.01" required>
+                </div>
+
+            </div>
+        </div>
+        <button id="calculateBtn">Calculate Total Cost</button>
+
+        <h2>Report Output (ETB)</h2>
+        <div id="reportContainer">
+            <pre id="reportOutput" style="min-height: 200px; background-color: #f0f8ff; border: 2px solid #28a745;">Report will appear here after calculation...</pre>
+        </div>
+
+        <h2>System Log</h2>
+        <pre id="logOutput">--- System Ready ---</pre>
+    </div>
+</body>
+</html>
